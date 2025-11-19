@@ -1,0 +1,91 @@
+{
+  "character": {
+    "name": "Aegis",
+    "race": "High Elf",
+    "class": "Ranger",
+    "subclass": "Gloom Stalker",
+    "level": 3,
+    "background": "Hermit",
+    "proficiency_bonus": 2
+  },
+  "abilities": {
+    "str": {"score": 8, "mod": -1},
+    "dex": {"score": 15, "mod": 2},
+    "con": {"score": 17, "mod": 3},
+    "int": {"score": 8, "mod": -1},
+    "wis": {"score": 16, "mod": 3},
+    "cha": {"score": 8, "mod": -1}
+  },
+  "combat": {
+    "hp": {
+      "current": 22,
+      "max": 28,
+      "temp": 0,
+      "hit_dice_total": 3,
+      "hit_dice_current": 2,
+      "hit_dice_type": "d10"
+    },
+    "ac": 14,
+    "initiative": 5,
+    "speed": 30,
+    "conditions": []
+  },
+  "resources": {
+    "spell_slots": {
+      "1": {"total": 3, "expended": 0}
+    },
+    "dreadful_strike": {
+      "total": 3,
+      "current": 3,
+      "description": "Add 2d6 Psychic damage. Uses = Wisdom Mod."
+    },
+    "favored_enemy": {
+      "total": 2,
+      "current": 2,
+      "description": "Free casts of Hunter's Mark."
+    }
+  },
+  "attacks": [
+    {
+      "name": "Longbow",
+      "bonus": 6,
+      "damage": "1d8 + 2",
+      "type": "Piercing",
+      "mastery": "Slow",
+      "range": "150/600"
+    },
+    {
+      "name": "Scimitar",
+      "bonus": 4,
+      "damage": "1d6 + 2",
+      "type": "Slashing",
+      "mastery": "Nick",
+      "properties": "Finesse, Light"
+    },
+    {
+      "name": "Shortbow",
+      "bonus": 6,
+      "damage": "1d6 + 2",
+      "type": "Piercing",
+      "mastery": "Vex",
+      "range": "80/320"
+    }
+  ],
+  "inventory": {
+    "arrows": 67,
+    "gold": 123,
+    "items": [
+      "Herbalism Kit",
+      "Bedroll",
+      "Philosophy Book",
+      "Studded Leather Armor",
+      "Druidic Focus (Mistletoe)"
+    ]
+  },
+  "features": [
+    "Umbral Sight (Darkvision 60ft, invisible to Darkvision)",
+    "Dread Ambusher (+Init, Speed boost turn 1)",
+    "Fey Ancestry",
+    "Keen Senses"
+  ]
+}
