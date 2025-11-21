@@ -34,6 +34,14 @@
     "spell_slots": {
       "1": {"total": 3, "expended": 0}
     },
+    "spells_known": {
+      "1": [
+        {"name": "Hunter's Mark", "type": "Bonus Action", "conc": true},
+        {"name": "Alarm", "type": "1 Minute (Ritual)", "conc": false},
+        {"name": "Hail of Thorns", "type": "Bonus Action", "conc": true},
+        {"name": "Disguise Self", "type": "Action", "conc": false}
+      ]
+    },
     "dreadful_strike": {
       "total": 3,
       "current": 3,

@@ -230,41 +230,70 @@ with col1:
                         st.rerun()
 
     with row_b:
-        st.subheader("✨ Resources")
+        st.subheader("✨ Spellcasting")
         
-        # Spell Slots
+        # 1. SLOT TRACKER
         slots = st.session_state.sheet['resources']['spell_slots']['1']
         avail = slots['total'] - slots['expended']
         
-        # Visual Slots
-        slot_visual = "🟦 " * avail + "⬜ " * slots['expended']
-        st.write(f"**1st Level:** {slot_visual}")
-        
-        b1, b2 = st.columns(2)
-        if b1.button("Cast Spell"):
-            if avail > 0:
-                st.session_state.sheet['resources']['spell_slots']['1']['expended'] += 1
-                st.rerun()
+        # Draw the "Bubbles"
+        cols = st.columns(slots['total'])
+        for i in range(slots['total']):
+            if i < slots['expended']:
+                cols[i].markdown("⚪") # Empty/Used
             else:
-                st.toast("No slots!")
+                cols[i].markdown("🟦") # Full/Available
                 
-        if b2.button("Recover"):
-            if slots['expended'] > 0:
-                st.session_state.sheet['resources']['spell_slots']['1']['expended'] -= 1
-                st.rerun()
-                
+        st.caption(f"**Slots Available:** {avail} / {slots['total']}")
+        
         st.divider()
         
-        # Dreadful Strike
-        ds = st.session_state.sheet['resources']['dreadful_strike']
-        st.write(f"**Dreadful Strike:** {ds['current']} / {ds['total']}")
-        if st.button("Use Dreadful Strike (+2d6)"):
-            if ds['current'] > 0:
-                ds['current'] -= 1
-                st.session_state.messages.append({"role": "assistant", "content": "🧠 **Psychic Damage:** +2d6 damage added!"})
-                st.rerun()
+        # 2. SPELL LIST BUTTONS
+        # We look for the spells in the JSON
+        known_spells = st.session_state.sheet.get('spells_known', {}).get('1', [])
+        
+        for spell in known_spells:
+            # Create a row for the spell
+            sp_col1, sp_col2 = st.columns([3, 1])
+            
+            with sp_col1:
+                # Display Name and Info
+                st.write(f"**{spell['name']}**")
+                tags = f"_{spell['type']}_"
+                if spell.get('conc'): tags += " | *Conc.*"
+                st.caption(tags)
                 
-        st.metric("Arrows", st.session_state.sheet['inventory']['arrows'])
+            with sp_col2:
+                # The Cast Button
+                if st.button("Cast", key=f"cast_{spell['name']}"):
+                    # Check for Favored Enemy Free Cast (Special Rule for Hunter's Mark)
+                    if spell['name'] == "Hunter's Mark" and st.session_state.sheet['resources']['favored_enemy']['current'] > 0:
+                        st.session_state.sheet['resources']['favored_enemy']['current'] -= 1
+                        msg = f"🪄 **Cast {spell['name']}** using a Free Use (Favored Enemy)!"
+                        st.session_state.messages.append({"role": "assistant", "content": msg})
+                        st.rerun()
+                        
+                    # Check for Slots
+                    elif avail > 0:
+                        st.session_state.sheet['resources']['spell_slots']['1']['expended'] += 1
+                        msg = f"🪄 **Cast {spell['name']}** (1st Level Slot expended)."
+                        if spell.get('conc'):
+                            msg += "\n⚠️ **Concentration Started!**"
+                            # Auto-add concentration to conditions
+                            if "Concentrating" not in st.session_state.sheet['combat']['conditions']:
+                                st.session_state.sheet['combat']['conditions'].append("Concentrating")
+                        
+                        st.session_state.messages.append({"role": "assistant", "content": msg})
+                        st.rerun()
+                    else:
+                        st.error("No slots left!")
+
+        # Manual Slot Restore Button (Small, at the bottom)
+        if st.button("🔄 Recover 1 Slot", help="Click if you made a mistake or used Arcane Recovery"):
+             if slots['expended'] > 0:
+                st.session_state.sheet['resources']['spell_slots']['1']['expended'] -= 1
+                st.rerun()
+
 
 # --- CHAT COLUMN ---
 with col2:
@@ -284,7 +313,7 @@ with col2:
         # GEMINI CALL
         # We construct a prompt that includes the JSON state so the AI knows what's happening
         try:
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-2.0-flash')
             
             system_context = f"""
             Role: You are a D&D 5e (2024 Rules) Assistant for Aegis.
